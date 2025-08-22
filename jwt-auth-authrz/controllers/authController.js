@@ -44,13 +44,14 @@ const handleLogin = async (req, res) => {
       path.join(__dirname, "..", "model", "users.json"),
       JSON.stringify(usersDB.users)
     );
+
     res.cookie("jwt", refreshToken, {
       httpOnly: true,
       sameSite: "None",
       secure: true,
       maxAge: 24 * 60 * 60 * 1000,
     }); //http-cookie, more secure than js-cookie
-    res.json({ "accessToken": accessToken });
+    res.json({ accessToken: accessToken });
   } else {
     res.status(401).json({ message: "password not correct!" });
   }
