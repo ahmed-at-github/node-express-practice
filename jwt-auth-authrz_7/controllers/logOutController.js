@@ -21,7 +21,7 @@ const handleLogout = async (req, res) => {
   );
   //   clear token in cookie
   if (!foundUser) {
-    console.log("notf");
+    // console.log("notf");
 
     res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true });
     return res.status(204).json({ message: "logout successfull" });
@@ -37,7 +37,7 @@ const handleLogout = async (req, res) => {
     path.join(__dirname, "..", "model", "users.json"),
     JSON.stringify(usersDB.users)
   );
-  console.log("f");
+  // console.log("f");
   res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true });
   res.status(204).json({ message: "logout successfull" });
 };
