@@ -1,0 +1,3 @@
+writing text to newFile
+
+appending some text
