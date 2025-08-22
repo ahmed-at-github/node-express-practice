@@ -2,15 +2,13 @@ const path = require("path");
 const express = require("express");
 const cors = require("cors");
 const corsOptions = require("./config/corsOptions");
-const cookieParser = require("cookie-parser");
 const { logger } = require("./middleware/logEvents");
 const errorHandler = require("./middleware/errorHandler");
 const app = express();
 
 const empRouter = require("./routes/api/employees");
 const registerRouter = require("./routes/register");
-const authRouter = require("./routes/auth");
-const refreshRouter = require("./routes/refresh");
+const authRouter = require("./routes/auth")
 const notFound = require("./controllers/notFoundController");
 const PORT = process.env.PORT || 1660;
 
@@ -30,19 +28,10 @@ app.use(express.urlencoded({ extended: false }));
 // built-in middleware for json
 app.use(express.json());
 
-//middleware for cookies
-app.use(cookieParser());
-
-//serve static files
-app.use(express.static(path.join(__dirname, "/public")));
-
 //routes
-
 app.use("/register", registerRouter);
 app.use("/auth", authRouter);
-app.use("/refresh", refreshRouter);
-app.use("/logout", require("./routes/logout"));
-app.use("/employees", empRouter);
+
 
 //404 not found
 app.use(notFound);
