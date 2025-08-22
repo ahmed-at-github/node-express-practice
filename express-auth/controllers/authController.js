@@ -1,4 +1,4 @@
-let users = require("../model/users.json");
+const users = require("../model/users.json");
 
 const usersDB = {
   users: users,
@@ -6,35 +6,24 @@ const usersDB = {
     this.users = data;
   },
 };
-const fsPromises = require("fs").promises;
-const path = require("path");
 const bcrypt = require("bcrypt");
 
-const handleNewUser = async (req, res) => {
+const handleLogin = async (req, res) => {
   const { user, pwd } = req.body;
   if (!user || !pwd)
     return res
       .status(400)
       .json({ message: "Username and password are required." });
-  // check for duplicate usernames in the db
-  const duplicate = usersDB.users.find((person) => person.username === user);
-  if (duplicate)
-    return res.status(409).json({ message: "user already exists" }); //Conflict
-  try {
-    //encrypt the password
-    const hashedPwd = await bcrypt.hash(pwd, 10);
-    //store the new user
-    const newUser = { username: user, password: hashedPwd };
-    usersDB.setUsers([...usersDB.users, newUser]);
-    await fsPromises.writeFile(
-      path.join(__dirname, "..", "model", "users.json"),
-      JSON.stringify(usersDB.users)
-    );
-    console.log(usersDB.users);
-    res.status(201).json({ success: `New user ${user} created!` });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+  const foundUser = usersDB.users.find((person) => person.username === user);
+  if (!foundUser) return res.status(401).json({ message: "user not found!" }); //Unauthorized
+  // evaluate password
+  const match = await bcrypt.compare(pwd, foundUser.password);
+  if (match) {
+    // create JWTs
+    res.json({ success: `User ${user} is logged in!` });
+  } else {
+    res.status(401).json({ message: "password not correct!" });
   }
 };
 
-module.exports = { handleNewUser };
+module.exports = { handleLogin };
